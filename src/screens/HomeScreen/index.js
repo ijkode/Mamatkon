@@ -185,6 +185,10 @@ const HomeScreen = () => {
     setBgColor("signOut");
     signOutUser();
   };
+  const handleAssistsPress = () => {
+    setBgColor("toggleButton");
+    navigation.navigate("Assists");
+  };
   const navigation = useNavigation();
   const signOutUser = async () => {
     try {
@@ -330,6 +334,22 @@ const HomeScreen = () => {
           onChangeText={updateSearch}
           value={search}
         />
+        <TouchableOpacity
+          onPress={() => {
+            setIsButtonClicked(!isButtonClicked);
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+          }}
+        >
+          <MaterialCommunityIcons
+            name={
+              isButtonClicked
+                ? "sort-calendar-descending"
+                : "sort-calendar-ascending"
+            }
+            size={28}
+            color="black"
+          />
+        </TouchableOpacity>
       </View>
       <ScrollView showVerticalScrollIndicator={false}>
         <View style={styles.gallery}>
@@ -448,58 +468,47 @@ const HomeScreen = () => {
             style={[
               styles.button,
               {
-                backgroundColor: bgColor === "messages" ? "#B5878F" : "#EDB1BC",
+                backgroundColor: bgColor === "messages" ? "#B5878F" : "#FFF7FC",
               },
             ]}
             onPress={handleStorePress}
           >
-            <AntDesign name="appstore1" size={24} color="white" />
+            <AntDesign name="appstore1" size={24} color="pink" />
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.button,
               {
-                backgroundColor: bgColor === "newPost" ? "#B5878F" : "#EDB1BC",
+                backgroundColor: bgColor === "newPost" ? "#B5878F" : "#FFF7FC",
               },
             ]}
             onPress={handleNewPostPress}
           >
             {/* <Text style={styles.postText}>+</Text> */}
-            <AntDesign name="pluscircleo" size={24} color="white" />
+            <AntDesign name="pluscircleo" size={24} color="pink" />
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.button,
               {
-                backgroundColor: bgColor === "settings" ? "#B5878F" : "#EDB1BC",
+                backgroundColor: bgColor === "settings" ? "#B5878F" : "#FFF7FC",
               },
             ]}
             onPress={handleLikesPress}
           >
-            <FontAwesome5 name="heart" size={24} color="white" />
+            <FontAwesome5 name="heart" size={24} color="pink" />
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.button,
               {
                 backgroundColor:
-                  bgColor === "toggleButton" ? "#B5878F" : "#EDB1BC",
+                  bgColor === "toggleButton" ? "#B5878F" : "#FFF7FC",
               },
             ]}
-            onPress={() => {
-              setIsButtonClicked(!isButtonClicked);
-              setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-            }}
+            onPress={handleAssistsPress}
           >
-            <MaterialCommunityIcons
-              name={
-                isButtonClicked
-                  ? "sort-calendar-descending"
-                  : "sort-calendar-ascending"
-              }
-              size={28}
-              color="white"
-            />
+            <FontAwesome5 name="hands-helping" size={24} color="pink" />
           </TouchableOpacity>
         </View>
       </View>
@@ -510,24 +519,6 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = {
-  button: {
-    backgroundColor: "#EDB1BC",
-    padding: 10,
-    margin: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 70,
-    width: 60,
-    height: 60,
-    elevation: 5,
-    shadowColor: "black",
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-  },
   appButtonContainer: {
     elevation: 8,
     backgroundColor: "#EDB1BC",
@@ -545,7 +536,14 @@ const styles = {
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
-    padding: 40,
+    padding: 30,
+    backgroundColor: "#F6F5F2", // Add a background color
+    borderRadius: 100, // Add border radius for rounded corners
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 20,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -725,9 +723,9 @@ const styles = {
     marginHorizontal: 2,
   },
   dropDownStyle: {
-    backgroundColor: "#fafafa",
+    backgroundColor: "#FFF", // Change the background color
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#EDB1BC", // Change the border color
     borderRadius: 8,
     zIndex: 9999,
   },
@@ -748,7 +746,7 @@ const styles = {
     margin: 10,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 70,
+    borderRadius: 50,
     width: 60,
     height: 60,
     elevation: 5,
