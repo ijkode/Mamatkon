@@ -348,6 +348,7 @@ const HomeScreen = () => {
             }
             size={28}
             color="black"
+            style={{ marginLeft: 10 }}
           />
         </TouchableOpacity>
       </View>
@@ -395,34 +396,40 @@ const HomeScreen = () => {
                         })
                       }
                     >
-                      <Image source={{ uri: image }} style={styles.image} />
-                      <Text style={styles.cardTitle}>
-                        {names[index].item_name}
-                      </Text>
-                      <Text style={styles.cardDescription}>
-                        {names[index].item_description}
-                      </Text>
-                      <Text style={styles.cardTimestamp}>
-                        {timestamps[index]}
-                      </Text>
-                      <View style={styles.ratingContainer}>
-                        <Rating
-                          showRating={false}
-                          startingValue={ratings[names[index].item_uid]} // Replace with the actual rating value
-                          imageSize={20}
-                          readonly
-                          style={styles.rating}
-                        />
-                        <TouchableOpacity
-                          onPress={() => handleReport(names[index].item_uid)}
-                        >
-                          <MaterialCommunityIcons
-                            name="flag"
-                            size={24}
-                            color="gray"
-                            style={styles.reportIcon}
-                          />
-                        </TouchableOpacity>
+                      <View style={styles.cardContent}>
+                        <Image source={{ uri: image }} style={styles.image} />
+                        <View style={styles.textContainer}>
+                          <Text style={styles.cardTitle}>
+                            {names[index].item_name}
+                          </Text>
+                          <Text style={styles.cardDescription}>
+                            {names[index].item_description}
+                          </Text>
+                          <Text style={styles.cardTimestamp}>
+                            {timestamps[index]}
+                          </Text>
+                          <View style={styles.ratingContainer}>
+                            <Rating
+                              showRating={false}
+                              startingValue={ratings[names[index].item_uid]}
+                              imageSize={20}
+                              readonly
+                              style={styles.rating}
+                            />
+                            <TouchableOpacity
+                              onPress={() =>
+                                handleReport(names[index].item_uid)
+                              }
+                            >
+                              <MaterialCommunityIcons
+                                name="flag"
+                                size={24}
+                                color="gray"
+                                style={styles.reportIcon}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        </View>
                       </View>
                     </TouchableOpacity>
                   </Card>
@@ -567,11 +574,11 @@ const styles = {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    padding: 15,
+    padding: 5,
   },
   image: {
-    width: 300,
-    height: 200,
+    width: "95%",
+    height: 100,
     margin: 5,
     borderRadius: 10,
     shadowColor: "#171717",
@@ -589,7 +596,7 @@ const styles = {
   },
   cardContainer: {
     margin: 5,
-    borderRadius: 10,
+    borderRadius: 30,
     shadowColor: "#171717",
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
@@ -616,7 +623,7 @@ const styles = {
     marginTop: "auto",
   },
   headerContainer: {
-    backgroundColor: "#EDB1BC",
+    backgroundColor: "#edb1bc",
     paddingHorizontal: 20,
     paddingTop: 20, // Decreased the top padding to lower the height
     paddingBottom: 10, // Decreased the bottom padding to lower the height
@@ -633,6 +640,12 @@ const styles = {
       height: 2,
     },
     elevation: 5,
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "white",
+    textAlign: "center", // Center the title vertically
+    borderRadius: 50, // Makes the container round
+    overflow: "hidden", // Ensures the content stays within the rounded shape
   },
   headerTitle: {
     fontSize: 24,
@@ -726,12 +739,12 @@ const styles = {
     backgroundColor: "#FFF", // Change the background color
     borderWidth: 1,
     borderColor: "#EDB1BC", // Change the border color
-    borderRadius: 8,
+    borderRadius: 20,
     zIndex: 9999,
   },
   dropDownLabelStyle: {
     fontSize: 16,
-    textAlign: "left",
+    textAlign: "right",
     color: "#333",
   },
   dropDownSelectedItemStyle: {

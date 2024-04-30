@@ -83,6 +83,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     textAlign: "center", // Center the title vertically
+    borderRadius: 50, // Makes the container round
+    overflow: "hidden", // Ensures the content stays within the rounded shape
   },
   backButtonContainer: {
     position: "absolute",

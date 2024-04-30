@@ -4,10 +4,9 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Linking,
-  Alert,
+  FlatList,
 } from "react-native";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { Card } from "react-native-elements";
 import { auth, db } from "../../../firebase";
 import {
@@ -15,33 +14,26 @@ import {
   updateDoc,
   arrayUnion,
   arrayRemove,
-  setDoc,
   getDoc,
 } from "firebase/firestore";
-import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
 const ItemDetails = ({ route }) => {
   const navigation = useNavigation();
-  const { Name, Description, Uri, Uid, Email, Phone } = route.params;
-  const [showOptions, setShowOptions] = useState(false);
-  const [showAdditionalButton, setShowAdditionalButton] = useState(false);
+  const { Name, Description, Uri, Uid } = route.params;
   const [ingredients, setIngredients] = useState([]);
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    // Function to fetch item details from Firestore
     const fetchItemDetails = async () => {
       try {
         const itemDoc = await getDoc(doc(db, "items", Uid));
         if (itemDoc.exists()) {
           const itemData = itemDoc.data();
-          // Check if 'ingredients' exists in the item data
           if (itemData.hasOwnProperty("ingredients")) {
             setIngredients(itemData.ingredients);
           }
         } else {
-          // Handle case where item with Uid does not exist
           console.log("Item not found in database");
         }
       } catch (error) {
@@ -49,15 +41,13 @@ const ItemDetails = ({ route }) => {
       }
     };
 
-    fetchItemDetails(); // Fetch item details when component mounts
+    fetchItemDetails();
 
-    // Cleanup function for useEffect
     return () => {
       // Cleanup code (if any)
     };
-  }, [Uid]); // Run effect when Uid changes
+  }, [Uid]);
 
-  // Function to handle like action
   const handleLike = async () => {
     try {
       const userRef = doc(db, "users", auth.currentUser.uid);
@@ -81,35 +71,36 @@ const ItemDetails = ({ route }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Text style={styles.appButtonContainer}>Item</Text>
+      <Text style={styles.appButtonContainer}>{Name}</Text>
       <View style={styles.gallery}>
         <Card containerStyle={styles.cardContainer}>
           <Card.Image source={{ uri: Uri }} style={styles.image} />
           <Text style={styles.itemName}>{Name}</Text>
           <Text style={styles.cardDescription}>{Description}</Text>
+          <TouchableOpacity
+            onPress={handleLike}
+            style={styles.likeButton}
+            activeOpacity={0.6}
+          >
+            <MaterialIcons
+              name={liked ? "favorite" : "favorite-border"}
+              size={30}
+              color={liked ? "red" : "black"}
+            />
+          </TouchableOpacity>
         </Card>
-        {/* Display ingredients */}
-        <View style={styles.ingredientsContainer}>
-          {ingredients.map((ingredient, index) => (
-            <View key={index} style={styles.ingredientWrapper}>
+        <FlatList
+          data={ingredients}
+          renderItem={({ item }) => (
+            <View style={styles.ingredientWrapper}>
               <Text style={styles.ingredientText}>
-                {ingredient.trim().replace(/\s+/g, " ")}
+                {"\u2022"} {item.trim().replace(/\s+/g, " ")}
               </Text>
             </View>
-          ))}
-        </View>
-        {/* Like button */}
-        <TouchableOpacity
-          onPress={handleLike}
-          style={styles.likeButton}
-          activeOpacity={0.6}
-        >
-          <MaterialIcons
-            name={liked ? "favorite" : "favorite-border"}
-            size={30}
-            color={liked ? "red" : "black"}
-          />
-        </TouchableOpacity>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+          style={styles.ingredientsContainer}
+        />
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.backButtonStyle}
@@ -205,6 +196,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     textAlign: "center", // Center the title vertically
+    borderRadius: 50, // Makes the container round
+    overflow: "hidden", // Ensures the content stays within the rounded shape
   },
   appButtonContainer1: {
     // elevation: 8,

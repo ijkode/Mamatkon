@@ -187,50 +187,53 @@ const PostScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Text style={styles.appButtonContainer}>פרסום מתכון</Text>
-      <CustomInput
-        name="itemName"
-        placeholder="שם מתכון"
-        control={control}
-        rules={{
-          required: "Item Name is required",
-        }}
-      />
-      <CustomInput
-        name="itemDescription"
-        placeholder="תאור מתכון"
-        control={control}
-        rules={{
-          required: "Item Description is required",
-        }}
-      />
+      <View style={{ flexDirection: "column", alignItems: "center" }}>
+        <CustomInput
+          name="itemName"
+          placeholder="שם מתכון"
+          control={control}
+          rules={{
+            required: "Item Name is required",
+          }}
+        />
+        <CustomInput
+          name="itemDescription"
+          placeholder="תאור מתכון"
+          control={control}
+          rules={{
+            required: "Item Description is required",
+          }}
+        />
+      </View>
       <Text style={{ textAlign: "center", fontSize: 18, marginVertical: 10 }}>
         מרכיבים
       </Text>
-      <View>
+      <View style={{ flexDirection: "column", alignItems: "center" }}>
         {ingredients.map((ingredient, index) => (
           <View
             key={index}
-            style={{ flexDirection: "column", alignItems: "center" }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 10,
+            }}
           >
             <CustomInput
               name={`ingredients[${index}].name`}
               placeholder={`הזן מרכיב`}
               control={control}
               defaultValue={ingredient.name}
+              style={{ flex: 1 }}
             />
+            {index !== 0 && (
+              <TouchableOpacity onPress={() => removeIngredientInput(index)}>
+                <FontAwesome name="remove" size={24} color="black" />
+              </TouchableOpacity>
+            )}
             {index === ingredients.length - 1 && (
-              <View style={{ flexDirection: "row" }}>
-                <TouchableOpacity onPress={addIngredientInput}>
-                  <Ionicons name="add-circle-outline" size={24} color="black" />
-                </TouchableOpacity>
-                {index !== 0 && (
-                  <TouchableOpacity
-                    onPress={() => removeIngredientInput(index)}
-                  >
-                    <FontAwesome name="remove" size={24} color="black" />
-                  </TouchableOpacity>
-                )}
-              </View>
+              <TouchableOpacity onPress={addIngredientInput}>
+                <Ionicons name="add-circle-outline" size={24} color="black" />
+              </TouchableOpacity>
             )}
           </View>
         ))}
@@ -510,12 +513,12 @@ const styles = StyleSheet.create({
   dropDownStyle: {
     backgroundColor: "#fafafa",
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
+    borderColor: "#EDB1BC",
+    borderRadius: 20,
     zIndex: 9999,
   },
   dropDownLabelStyle: {
-    fontSize: 16,
+    fontSize: 14,
     textAlign: "left",
     color: "#333",
   },

@@ -49,7 +49,7 @@ const CustomInput = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    width: "100%",
+    width: "85%",
     height: 40,
     alignItems: "center",
     justifyContent: "center",

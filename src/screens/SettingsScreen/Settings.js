@@ -23,6 +23,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import Logo from "../../../assets/images/Logo2.png";
 import {
   getStorage,
   ref,
@@ -36,7 +37,7 @@ import {
 import { useForm } from "react-hook-form";
 import CustomInput from "../../components/CustomInput";
 import { Feather } from "@expo/vector-icons";
-
+import { MaterialIcons } from "@expo/vector-icons";
 const Settings = () => {
   const navigation = useNavigation();
   const [name, setName] = useState("");
@@ -76,44 +77,88 @@ const Settings = () => {
   };
   return (
     <View style={{ flex: 1 }}>
-      <Text style={styles.appButtonContainer}>הגדרות</Text>
-      <Text style={styles.appButtonContainer1}>שלום {name}</Text>
-      <View style={{ alignItems: "center", width: "100%" }}>
-        <TouchableOpacity style={styles.button} onPress={handleHistoryPress}>
-          <FontAwesome5 name="history" size={24} color="black" />
-          <Text>הסטורית העלאות</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handlePurchasesPress}>
-          <FontAwesome5 name="opencart" size={24} color="black" />
-          <Text>הסטורית בקשות</Text>
-        </TouchableOpacity>
-        {isAdmin ? ( // Display the Reports button only if isAdmin is true
-          <TouchableOpacity style={styles.button} onPress={handleReportsPress}>
-            <FontAwesome name="file-text-o" size={24} color="black" />
-            <Text>ניהול דוחות</Text>
-          </TouchableOpacity>
-        ) : null}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("ForgotPasswordScreen")}
-        >
-          <MaterialCommunityIcons name="lock-reset" size={24} color="black" />
-          <Text>איפוס סיסמא</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleImprove}>
-          <FontAwesome5 name="hands-helping" size={24} color="black" />
-          <Text>עזור לנו להשתפר!</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={signOutUser}>
-          <AntDesign name="logout" size={24} color="black" />
-          <Text>התנתק</Text>
-        </TouchableOpacity>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.appButtonContainer}>הגדרות</Text>
+        <Text style={styles.appButtonContainer1}>שלום {name}</Text>
+        <View style={{ alignItems: "center", width: "100%" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              width: "100%",
+            }}
+          >
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleHistoryPress}
+            >
+              <FontAwesome5 name="history" size={24} color="black" />
+              <Text>הסטורית העלאות</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handlePurchasesPress}
+            >
+              <MaterialIcons name="location-history" size={24} color="black" />
+              <Text>הסטורית בקשות</Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              width: "100%",
+            }}
+          >
+            {isAdmin ? (
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleReportsPress}
+              >
+                <FontAwesome name="file-text-o" size={24} color="black" />
+                <Text>ניהול דוחות</Text>
+              </TouchableOpacity>
+            ) : null}
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("ForgotPasswordScreen")}
+            >
+              <MaterialCommunityIcons
+                name="lock-reset"
+                size={24}
+                color="black"
+              />
+              <Text>איפוס סיסמא</Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-around",
+              width: "100%",
+            }}
+          >
+            <TouchableOpacity style={styles.button} onPress={handleImprove}>
+              <Feather name="target" size={24} color="black" />
+              <Text>עזור לנו להשתפר!</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={signOutUser}>
+              <AntDesign name="logout" size={24} color="black" />
+              <Text>התנתק</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+      <View style={{ alignItems: "center", marginTop: 10 }}>
+        <Image source={Logo} style={styles.smallLogo} resizeMode="contain" />
+      </View>
+      <View style={styles.backButtonContainer}>
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.backButtonStyle}
           onPress={() => navigation.navigate("Home")}
         >
-          <Text>חזרה לעמוד הבית</Text>
+          <Text style={styles.backTextStyle}>חזרה לדף הבית</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -128,17 +173,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
   },
+  backButtonContainer: {
+    alignItems: "center", // Center the button horizontally
+    justifyContent: "center", // Center the button vertically
+    marginTop: 20, // Add margin to separate the button from the rest of the content
+  },
+  backButtonStyle: {
+    alignItems: "center",
+    color: "gray",
+    padding: 5,
+    width: 250,
+  },
+  smallLogo: {
+    width: 500, // Adjust the width as needed
+    height: 200, // Adjust the height as needed
+    marginBottom: 10, // Add margin bottom to separate from the buttons
+  },
   button: {
     backgroundColor: "white",
     padding: 15,
-    gep: 15,
+    gap: 2,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    marginTop: 30,
-    borderRadius: 70,
-    width: "40%",
-    height: 60,
+    marginTop: 20,
+    borderRadius: 20,
+    width: "45%",
+    height: 100,
     elevation: 5,
     shadowColor: "black",
     shadowOpacity: 0.3,
@@ -170,7 +231,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   appButtonContainer: {
-    backgroundColor: "#EDB1BC",
+    backgroundColor: "#edb1bc",
     paddingHorizontal: 20,
     paddingTop: 20, // Decreased the top padding to lower the height
     paddingBottom: 10, // Decreased the bottom padding to lower the height
@@ -191,6 +252,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     textAlign: "center", // Center the title vertically
+    borderRadius: 50, // Makes the container round
+    overflow: "hidden", // Ensures the content stays within the rounded shape
   },
   appButtonContainer1: {
     // elevation: 8,

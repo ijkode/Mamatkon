@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     color: "#FDB075",
   },
   appButtonContainer: {
-    backgroundColor: "#cfc5ae",
+    backgroundColor: "#edb1bc",
     paddingHorizontal: 20,
     paddingTop: 20, // Decreased the top padding to lower the height
     paddingBottom: 10, // Decreased the bottom padding to lower the height
@@ -108,6 +108,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     textAlign: "center", // Center the title vertically
+    borderRadius: 50, // Makes the container round
+    overflow: "hidden", // Ensures the content stays within the rounded shape
   },
 });
 

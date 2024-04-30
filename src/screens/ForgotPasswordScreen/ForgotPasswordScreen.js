@@ -30,12 +30,14 @@ const ForgotPasswordScreen = () => {
     <ScrollView showVerticalScrollIndicator={false}>
       <View>
         <Text style={styles.appButtonContainer}>אפס סיסמא</Text>
-        <CustomInput
-          name="email"
-          control={control}
-          placeholder="אימייל"
-          rules={{ required: "Email is required" }}
-        />
+        <View style={styles.inputContainer}>
+          <CustomInput
+            name="email"
+            control={control}
+            placeholder="אימייל"
+            rules={{ required: "Email is required" }}
+          />
+        </View>
         <CustomButton text="שלח" onPress={handleSubmit(onSendPressed)} />
         <CustomButton
           text="חזרה להתחברות"
@@ -87,6 +89,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     textAlign: "center", // Center the title vertically
+    borderRadius: 50, // Makes the container round
+    overflow: "hidden", // Ensures the content stays within the rounded shape
+  },
+  inputContainer: {
+    alignItems: "center", // Center the items horizontally
+    marginBottom: 10, // Add some space between inputs
   },
 });
 

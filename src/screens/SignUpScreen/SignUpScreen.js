@@ -60,80 +60,82 @@ const SignUpScreen = () => {
 
   return (
     <ScrollView showVerticalScrollIndicator={false}>
-      <Text style={styles.appButtonContainer}>Create a user</Text>
-      <CustomInput
-        name="email"
-        placeholder="אימייל"
-        control={control}
-        rules={{
-          pattern: {
-            value: EMAIL_REGEX,
-            message: "אימייל לא חוקי",
-          },
-        }}
-        style={styles.input}
-      />
+      <Text style={styles.appButtonContainer}>צור משתמש</Text>
+      <View style={styles.inputContainer}>
+        <CustomInput
+          name="email"
+          placeholder="אימייל"
+          control={control}
+          rules={{
+            pattern: {
+              value: EMAIL_REGEX,
+              message: "אימייל לא חוקי",
+            },
+          }}
+          style={styles.input}
+        />
 
-      <CustomInput
-        name="name"
-        placeholder="שם מלא"
-        control={control}
-        rules={{
-          required: "Full Name is required",
-          minLength: {
-            value: 5,
-            message: "שם מלא חייב להכיל שם פרטי ושם משפחה",
-          },
-        }}
-        style={styles.input}
-      />
+        <CustomInput
+          name="name"
+          placeholder="שם מלא"
+          control={control}
+          rules={{
+            required: "Full Name is required",
+            minLength: {
+              value: 5,
+              message: "שם מלא חייב להכיל שם פרטי ושם משפחה",
+            },
+          }}
+          style={styles.input}
+        />
 
-      <CustomInput
-        name="phone"
-        placeholder="מספר טלפון"
-        control={control}
-        rules={{
-          required: "חובה להזין מספר טלפון",
-          pattern: {
-            value: PHONE_NUMBER_REGEX,
-            message: "יש להזין מספר טלפון, xxx-xxxxxxx",
-          },
-        }}
-        style={styles.input}
-      />
+        <CustomInput
+          name="phone"
+          placeholder="מספר טלפון"
+          control={control}
+          rules={{
+            required: "חובה להזין מספר טלפון",
+            pattern: {
+              value: PHONE_NUMBER_REGEX,
+              message: "יש להזין מספר טלפון, xxx-xxxxxxx",
+            },
+          }}
+          style={styles.input}
+        />
 
-      <CustomInput
-        name="password"
-        placeholder="סיסמא"
-        control={control}
-        secureTextEntry
-        rules={{
-          required: "סיסמא נדרשת",
-          minLength: {
-            value: 8,
-            message:
-              "הסיסמא חייבת להכיל לפחות אות גדולה אחת, אות קטנה ואורך של 8 תווים",
-          },
-          pattern: {
-            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-            message:
-              "הסיסמא חייבת להכיל לפחות אות גדולה אחת, אות קטנה ואורך של 8 תווים",
-          },
-        }}
-        style={styles.input}
-      />
+        <CustomInput
+          name="password"
+          placeholder="סיסמא"
+          control={control}
+          secureTextEntry
+          rules={{
+            required: "סיסמא נדרשת",
+            minLength: {
+              value: 8,
+              message:
+                "הסיסמא חייבת להכיל לפחות אות גדולה אחת, אות קטנה ואורך של 8 תווים",
+            },
+            pattern: {
+              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+              message:
+                "הסיסמא חייבת להכיל לפחות אות גדולה אחת, אות קטנה ואורך של 8 תווים",
+            },
+          }}
+          style={styles.input}
+        />
 
-      <CustomInput
-        name="password-repeat"
-        placeholder="חזור על הסיסמא שנית"
-        control={control}
-        secureTextEntry
-        rules={{
-          validate: (value) => value === pwd || "סיסמא לא תואמת",
-        }}
-        style={styles.input}
-      />
-      <CustomButton text="Register" onPress={handleSubmit(onRegisterPressed)} />
+        <CustomInput
+          name="password-repeat"
+          placeholder="חזור על הסיסמא שנית"
+          control={control}
+          secureTextEntry
+          rules={{
+            validate: (value) => value === pwd || "סיסמא לא תואמת",
+          }}
+          style={styles.input}
+        />
+      </View>
+      <CustomButton text="הרשם" onPress={handleSubmit(onRegisterPressed)} />
       <Text style={styles.text}>
         בהרשמה הנך מסכים ל{" "}
         <Text style={styles.link} onPress={onTermsOfUsePressed}>
@@ -174,13 +176,13 @@ const styles = StyleSheet.create({
     color: "#FDB075",
   },
   appButtonContainer: {
-    backgroundColor: "#EDB1BC",
+    backgroundColor: "#edb1bc",
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 10,
+    paddingTop: 20, // Decreased the top padding to lower the height
+    paddingBottom: 10, // Decreased the bottom padding to lower the height
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center", // Center the title horizontally
     borderBottomWidth: 1,
     borderBottomColor: "#B2B2B2",
     shadowColor: "#000",
@@ -194,12 +196,19 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     color: "white",
-    textAlign: "center",
+    textAlign: "center", // Center the title vertically
+    borderRadius: 50, // Makes the container round
+    overflow: "hidden", // Ensures the content stays within the rounded shape
+  },
+  inputContainer: {
+    alignItems: "center", // Center the items horizontally
+    marginBottom: 10, // Add some space between inputs
   },
   input: {
     width: "80%", // Adjust the width as needed
     alignSelf: "center",
-    marginBottom: 10, // Add some space between inputs
+    justifyContent: "center",
+    marginVertical: 10, // Add some space above and below the input
   },
 });
 
