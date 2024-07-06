@@ -47,8 +47,8 @@ const Settings = () => {
     navigation.navigate("History");
   };
 
-  const handlePurchasesPress = () => {
-    navigation.navigate("Purchases");
+  const handleAssistsHistoryPress = () => {
+    navigation.navigate("AssistsHistory");
   };
 
   const handleReportsPress = () => {
@@ -97,7 +97,7 @@ const Settings = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={handlePurchasesPress}
+              onPress={handleAssistsHistoryPress}
             >
               <MaterialIcons name="location-history" size={24} color="black" />
               <Text>הסטורית בקשות</Text>

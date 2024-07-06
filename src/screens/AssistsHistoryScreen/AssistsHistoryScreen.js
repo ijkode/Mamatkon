@@ -6,36 +6,43 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  Linking,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  where,
+  query,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../../firebase"; // Import Firebase db instance
-import Icon from "react-native-vector-icons/FontAwesome"; // Assuming you use FontAwesome for icons
+import { auth } from "../../../firebase"; // Import Firebase auth instance
 
-const AssistsScreen = () => {
+const AssistsHistoryScreen = () => {
   const navigation = useNavigation();
   const [assists, setAssists] = useState([]);
+  const currentUserUid = auth.currentUser.uid; // Get current user's UID
 
   useEffect(() => {
     const fetchReports = async () => {
       try {
         const assistRef = collection(db, "assists");
-        const querySnapshot = await getDocs(
-          query(collection(db, "assists"), where("show", "==", 0))
-        );
-        const fetchedAssists = querySnapshot.docs.map((doc) => ({
+        const q = query(assistRef, where("createdBy", "==", currentUserUid));
+        const snapshot = await getDocs(q);
+        const fetchedAssists = snapshot.docs.map((doc) => ({
           id: doc.id,
           data: doc.data(),
         }));
         setAssists(fetchedAssists);
+        console.log(fetchedAssists);
       } catch (error) {
         console.log("שגיאה באחזור דוחות", error);
       }
     };
 
     fetchReports();
-  }, []);
+  }, [currentUserUid]);
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp.seconds * 1000);
@@ -52,8 +59,27 @@ const AssistsScreen = () => {
     return date.toLocaleDateString("he-IL", options);
   };
 
-  const handlePhonePress = (phoneNumber) => {
-    Linking.openURL(`tel:${phoneNumber}`);
+  const handleShowButtonClick = async (assistId, currentShowValue) => {
+    try {
+      const assistDocRef = doc(db, "assists", assistId);
+      const newShowValue = currentShowValue === 1 ? 0 : 1; // Toggle show value
+      await updateDoc(assistDocRef, {
+        show: newShowValue,
+      });
+      // Refresh the assists list after updating
+      const updatedAssists = assists.map((assist) =>
+        assist.id === assistId
+          ? {
+              ...assist,
+              data: { ...assist.data, show: newShowValue },
+            }
+          : assist
+      );
+      setAssists(updatedAssists);
+      console.log("Document updated successfully!");
+    } catch (error) {
+      console.error("Error updating document: ", error);
+    }
   };
 
   return (
@@ -62,43 +88,34 @@ const AssistsScreen = () => {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.appButtonContainer}>הצעות</Text>
+        <Text style={styles.appButtonContainer}>הסטורית הצעות</Text>
         {assists.map((assist) => (
           <View key={assist.id} style={styles.assistContainer}>
-            <View style={styles.phoneIconContainer}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
               <TouchableOpacity
-                style={styles.phoneIcon}
-                onPress={() => handlePhonePress(assist.data.phone)}
+                onPress={() =>
+                  handleShowButtonClick(assist.id, assist.data.show)
+                }
               >
-                <Icon name="phone" size={20} color="gray" />
+                <Text style={styles.showButton}>
+                  {assist.data.show === 1 ? "חדש הצעה" : "בטל הצעה"}
+                </Text>
               </TouchableOpacity>
-            </View>
-            <View style={styles.contentContainer}>
               <Text style={styles.title}>{assist.data.title}</Text>
-              <Text style={styles.description}>{assist.data.description}</Text>
-              <Text style={styles.date}>
-                תאריך: {formatDate(assist.data.createdAt)}
-              </Text>
             </View>
+            <Text style={styles.description}>{assist.data.description}</Text>
+            <Text style={styles.date}>
+              תאריך: {formatDate(assist.data.createdAt)}
+            </Text>
           </View>
         ))}
       </ScrollView>
-      <View style={styles.backButtonContainer}>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={styles.buttonStyle}
-          onPress={() => navigation.navigate("PostAssists")}
-        >
-          <Text style={styles.textStyle}>פרסם הצעה חדשה</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={styles.backButtonStyle}
-          onPress={() => navigation.navigate("Home")}
-        >
-          <Text style={styles.backTextStyle}>חזרה לדף הבית</Text>
-        </TouchableOpacity>
-      </View>
       <View style={styles.backButtonContainer}>
         <TouchableOpacity
           activeOpacity={0.5}
@@ -142,8 +159,23 @@ const styles = StyleSheet.create({
     padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
-    flexDirection: "row",
-    alignItems: "center",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  phone: {
+    fontSize: 14,
+    color: "gray",
+  },
+  date: {
+    fontSize: 12,
+    color: "gray",
   },
   backButtonContainer: {
     position: "absolute",
@@ -166,48 +198,10 @@ const styles = StyleSheet.create({
     color: "gray",
     textAlign: "center",
   },
-  phoneIconContainer: {
-    width: 40, // Adjust as needed
-  },
-  phoneIcon: {
-    marginRight: 10,
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  description: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  phone: {
-    fontSize: 14,
-    color: "gray",
-  },
-  date: {
-    fontSize: 12,
-    color: "gray",
-  },
-  buttonStyle: {
-    alignItems: "center",
-    backgroundColor: "#edb1bc",
-    padding: 10,
-    marginVertical: 10,
-    width: 250,
-    borderRadius: 8,
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-  },
-  backTextStyle: {
-    color: "gray",
+  showButton: {
+    color: "blue",
     fontWeight: "bold",
   },
 });
 
-export default AssistsScreen;
+export default AssistsHistoryScreen;

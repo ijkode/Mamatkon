@@ -16,6 +16,8 @@ import History from "../screens/HistoryScreen";
 import Likes from "../screens/LikesScreen";
 import Reports from "../screens/ReportsScreen";
 import Assists from "../screens/AssistsScreen";
+import AssistsHistory from "../screens/AssistsHistoryScreen";
+import PostAssists from "../screens/PostAssistsScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const Stack = createNativeStackNavigator();
 
@@ -100,6 +102,8 @@ const Navigation = () => {
           <Stack.Screen name="Likes" component={Likes} />
           <Stack.Screen name="Reports" component={Reports} />
           <Stack.Screen name="Assists" component={Assists} />
+          <Stack.Screen name="PostAssists" component={PostAssists} />
+          <Stack.Screen name="AssistsHistory" component={AssistsHistory} />
         </Stack.Navigator>
       </NavigationContainer>
     );

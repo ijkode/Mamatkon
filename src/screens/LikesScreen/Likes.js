@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,9 +11,6 @@ import {
   ScrollView,
   Modal,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import { decode } from "base-64";
-import CustomButton from "../../components/CustomButton";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { storage } from "../../../firebase";
 import { auth, db } from "../../../firebase";
@@ -27,27 +25,16 @@ import {
   getDoc,
   arrayRemove,
 } from "firebase/firestore";
-import * as ImagePicker from "expo-image-picker";
-import { FontAwesome } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
 import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
-  uploadString,
-  uploadBytes,
-  updateMetadata,
-  connectStorageEmulator,
-  listAll,
   getMetadata,
-  deleteObject,
+  listAll,
 } from "firebase/storage";
-import { useForm } from "react-hook-form";
-import CustomInput from "../../components/CustomInput";
-import { Feather } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import { Rating } from "react-native-ratings";
+
 const Likes = () => {
   const navigation = useNavigation();
   const [items, setItems] = useState("");
@@ -61,6 +48,7 @@ const Likes = () => {
   const [userName, setUserName] = useState("");
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [sellerRating, setSellerRating] = useState(0);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const getData = async () => {
@@ -90,12 +78,9 @@ const Likes = () => {
         })
       );
       setNames(namesWithMetadata);
-      // Filter names based on matching item_uids and items
       const filteredNames = namesWithMetadata.filter((name) =>
         items.includes(name.item_uid)
       );
-
-      // Filter the urls based on matching itemUIDs and items
       const filteredUrls = urls.filter((url, index) =>
         items.includes(namesWithMetadata[index].item_uid)
       );
@@ -110,6 +95,15 @@ const Likes = () => {
     });
   }, [items]);
 
+  const updateSearch = (search) => {
+    setSearch(search);
+  };
+
+  // Filter gallery items based on the search query
+  const filteredGallery = gallery.filter((image, index) =>
+    names[index].item_name.toLowerCase().includes(search.toLowerCase())
+  );
+
   const handleRatingSubmit = async () => {
     const docRef = doc(db, `items/${selectedItemUid}`);
     const docSnap = await getDoc(docRef);
@@ -122,6 +116,7 @@ const Likes = () => {
 
     setShowRatingModal(false);
   };
+
   const handleReport = (itemUid) => {
     Alert.alert("אימות", "האם אתה בטוח שאתה מעוניין לדווח על המתכון?", [
       { text: "לא", style: "cancel" },
@@ -159,14 +154,36 @@ const Likes = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Text style={styles.appButtonContainer}>מתכונים ששמרתי</Text>
+      <Text style={styles.appButtonContainer}>מתכונים שאהבתי</Text>
+
+      {/* Search Input */}
+      <TextInput
+        style={styles.searchInput}
+        placeholder="חיפוש לפי שם מתכון"
+        onChangeText={updateSearch}
+        value={search}
+      />
 
       <ScrollView showVerticalScrollIndicator={false}>
         <View style={styles.gallery}>
-          {gallery.map((image, index) => (
+          {/* Render filtered gallery */}
+          {filteredGallery.map((image, index) => (
             <Card key={index} containerStyle={styles.card}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("ItemDetails", {
+                    Name: names[index].item_name,
+                    Description: names[index].item_description,
+                    Uri: image,
+                    Uid: names[index].item_uid,
+                    Email: names[index].email,
+                    Phone: names[index].phone_number,
+                  })
+                }
+              >
+                <Image source={{ uri: image }} style={styles.image} />
+              </TouchableOpacity>
               <Text style={styles.cardTitle}>{names[index].item_name}</Text>
-              <Image source={{ uri: image }} style={styles.image} />
               <View style={styles.cardContent}>
                 <Text style={styles.itemDescription}>
                   {names[index].item_description}
@@ -188,6 +205,7 @@ const Likes = () => {
           ))}
         </View>
       </ScrollView>
+
       <View style={styles.backButtonContainer}>
         <TouchableOpacity
           activeOpacity={0.5}
@@ -197,6 +215,8 @@ const Likes = () => {
           <Text style={styles.backTextStyle}>חזרה לדף הבית</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Report Modal */}
       <Modal visible={showReportInput} transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -224,6 +244,8 @@ const Likes = () => {
           </View>
         </View>
       </Modal>
+
+      {/* Rating Modal */}
       <Modal visible={showRatingModal} transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -342,6 +364,15 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     textAlign: "center",
   },
+  searchInput: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 20,
+    marginBottom: 10,
+  },
   buttonStyle: {
     alignItems: "center",
     backgroundColor: "#FF597B",
@@ -372,8 +403,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   imageStyle: {
-    width: 200,
-    height: 200,
+    width: 50,
+    height: 50,
     margin: 5,
   },
   buttonDisabled: {
@@ -391,7 +422,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 300,
-    height: 300,
+    height: 100,
     margin: 10,
   },
   itemDetails: {

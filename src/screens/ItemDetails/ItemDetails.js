@@ -27,6 +27,17 @@ const ItemDetails = ({ route }) => {
   useEffect(() => {
     const fetchItemDetails = async () => {
       try {
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.saved && userData.saved.includes(Uid)) {
+            setLiked(true); // Set liked to true if Uid is in saved list
+          }
+        } else {
+          console.log("User document not found");
+        }
+
         const itemDoc = await getDoc(doc(db, "items", Uid));
         if (itemDoc.exists()) {
           const itemData = itemDoc.data();
