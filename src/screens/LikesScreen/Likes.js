@@ -164,7 +164,7 @@ const Likes = () => {
         value={search}
       />
 
-      <ScrollView showVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.gallery}>
           {/* Render filtered gallery */}
           {filteredGallery.map((image, index) => (
@@ -203,6 +203,10 @@ const Likes = () => {
               </View>
             </Card>
           ))}
+          {/* Display message when no items to show */}
+          {filteredGallery.length === 0 && (
+            <Text style={styles.noItemsText}>אין פריטים להצגה</Text>
+          )}
         </View>
       </ScrollView>
 

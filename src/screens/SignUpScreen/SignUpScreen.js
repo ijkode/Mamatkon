@@ -49,12 +49,14 @@ const SignUpScreen = () => {
   };
 
   const onTermsOfUsePressed = () => {
-    const url = "to do";
+    const url =
+      "https://www.privacypolicyonline.com/live.php?token=Z36Rc43a0MkHzYXDAGsAjFVT6q5gNRSk";
     Linking.openURL(url);
   };
 
   const onPrivacyPolicyPressed = () => {
-    const url = "to do";
+    const url =
+      "https://www.privacypolicyonline.com/live.php?token=CiStvHESxSFwzN25Wen44O3Auh5soYFg";
     Linking.openURL(url);
   };
 
