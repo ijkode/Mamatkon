@@ -100,7 +100,7 @@ const Settings = () => {
               onPress={handleAssistsHistoryPress}
             >
               <MaterialIcons name="location-history" size={24} color="black" />
-              <Text>הסטורית בקשות</Text>
+              <Text>הסטורית הצעות</Text>
             </TouchableOpacity>
           </View>
           <View

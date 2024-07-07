@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   Linking,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -80,6 +81,12 @@ const AssistsScreen = () => {
                 תאריך: {formatDate(assist.data.createdAt)}
               </Text>
             </View>
+            {assist.data.imageUrl && (
+              <Image
+                source={{ uri: assist.data.imageUrl }}
+                style={styles.assistImage}
+              />
+            )}
           </View>
         ))}
       </ScrollView>
@@ -91,15 +98,6 @@ const AssistsScreen = () => {
         >
           <Text style={styles.textStyle}>פרסם הצעה חדשה</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          style={styles.backButtonStyle}
-          onPress={() => navigation.navigate("Home")}
-        >
-          <Text style={styles.backTextStyle}>חזרה לדף הבית</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.backButtonContainer}>
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.backButtonStyle}
@@ -140,8 +138,16 @@ const styles = StyleSheet.create({
   },
   assistContainer: {
     padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    margin: 10,
+    backgroundColor: "white",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -174,15 +180,18 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
+    marginRight: 10, // Add margin to create space for the image
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#333",
   },
   description: {
     fontSize: 16,
     marginBottom: 10,
+    color: "#666",
   },
   phone: {
     fontSize: 14,
@@ -207,6 +216,11 @@ const styles = StyleSheet.create({
   backTextStyle: {
     color: "gray",
     fontWeight: "bold",
+  },
+  assistImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
   },
 });
 

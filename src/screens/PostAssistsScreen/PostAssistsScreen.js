@@ -7,12 +7,20 @@ import {
   SafeAreaView,
   TextInput,
   ScrollView,
+  Image,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 import { auth, db } from "../../../firebase";
-import { doc, updateDoc, arrayUnion, setDoc, getDoc } from "firebase/firestore";
-import CustomButton from "../../components/CustomButton";
+import { doc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
+import * as ImagePicker from "expo-image-picker";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 
 const PostAssistsScreen = () => {
   const navigation = useNavigation();
@@ -20,12 +28,80 @@ const PostAssistsScreen = () => {
   const [title, setTitle] = useState("");
   const [phone, setPhone] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+
+  const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert("Oops", "הרשאות נדרשות להעלאת תמונה");
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setImage(result.assets[0].uri);
+    } else {
+      Alert.alert("Oops", "לא נבחרה תמונה");
+    }
+  };
+
+  const uploadImage = async (uri) => {
+    if (!uri) return null;
+
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    const storage = getStorage();
+    const storageRef = ref(
+      storage,
+      `images/${auth.currentUser.uid}/${Date.now()}`
+    );
+
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Progress function
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+        },
+        (error) => {
+          // Error function
+          console.error("Upload failed:", error);
+          reject(error);
+        },
+        () => {
+          // Complete function
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
+  };
 
   const onSubmit = async () => {
     const user = auth.currentUser;
     if (!user) {
       console.error("User not logged in.");
       return;
+    }
+
+    let uploadedImageUrl = null;
+    if (image) {
+      uploadedImageUrl = await uploadImage(image);
     }
 
     try {
@@ -42,8 +118,8 @@ const PostAssistsScreen = () => {
         createdBy: user.uid,
         createdAt: new Date(),
         show: 0,
+        imageUrl: uploadedImageUrl,
       });
-      // Optionally, you can navigate back to home or perform any other action upon successful submission
       navigation.navigate("Home");
     } catch (error) {
       console.error("Error adding assist:", error);
@@ -57,8 +133,6 @@ const PostAssistsScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.appButtonContainer}>פרסם הצעה חדשה</Text>
-
-        {/* Title Input */}
         <TextInput
           style={styles.input}
           placeholder="כותרת"
@@ -71,7 +145,6 @@ const PostAssistsScreen = () => {
           value={phone}
           onChangeText={(text) => setPhone(text)}
         />
-        {/* Description Input */}
         <TextInput
           style={[styles.input, { height: 120 }]}
           placeholder="תיאור"
@@ -80,11 +153,18 @@ const PostAssistsScreen = () => {
           value={description}
           onChangeText={(text) => setDescription(text)}
         />
-
-        {/* Submit Button */}
+        {image && (
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: image }} style={styles.image} />
+          </View>
+        )}
+        <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
+          <Text style={styles.buttonText}>בחר תמונה</Text>
+        </TouchableOpacity>
         <TouchableOpacity
-          style={styles.buttonStyle}
+          style={[styles.buttonStyle, !image && styles.disabledButton]}
           onPress={handleSubmit(onSubmit)}
+          disabled={!image}
         >
           <Text style={styles.buttonText}>שלח</Text>
         </TouchableOpacity>
@@ -156,17 +236,28 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonStyle: {
-    alignSelf: "center", // Align the button itself to the center
+    alignSelf: "center",
     backgroundColor: "#d27989",
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginVertical: 10,
     borderRadius: 8,
   },
+  disabledButton: {
+    backgroundColor: "#ccc",
+  },
   buttonText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  image: {
+    width: 200,
+    height: 200,
   },
 });
 
